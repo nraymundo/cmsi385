@@ -132,7 +132,7 @@ def accept(nfa, start_state, accept_states, string):
 
 
 def acceptNFA(nfa, start_state, accept_states, string, i, edges, max_length):
-    # nextStates = nfa
+    nextStates = start_state
     # print("i", i)
     if (i >= len(string)):
         # print("hi")
@@ -140,13 +140,13 @@ def acceptNFA(nfa, start_state, accept_states, string, i, edges, max_length):
             return True
         return False
     for transitions in nfa:
-        print(transitions)
-        print(string[i])
-        if (string[i] in transitions):
-            print("transitions", transitions)
-            print("nfa[transitions]", nfa[transitions])
+        # print(transitions)
+        # print(string[i])
+        if (string[i] in transitions and nextStates in transitions):
+            # print("transitions", transitions)
+            # print("nfa[transitions]", nfa[transitions])
             nextStates = nfa[transitions]
-            print("nextStates", nextStates)
+            # print("nextStates", nextStates)
             break
         # else:
         #     return False
