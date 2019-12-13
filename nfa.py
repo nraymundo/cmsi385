@@ -1,13 +1,12 @@
 import re
 
-file = open("test2.txt", "r")
+# file = open("test.txt", "r")
+file = open("input.txt", "r")
+# file = open("test2.txt", "r")
 start_state = (file.readline()).strip().split('=')
 start_state = start_state[1]
 accept_states = (file.readline()).strip().split('=')
 accept_states = accept_states[1].split(',')
-
-# print("start", start_state)
-# print("accept", accept_states)
 
 string = input("Please enter a string: ")
 
@@ -40,66 +39,47 @@ for i in range(len(arr)):
 
 nfa = obj
 
-# print(nfa)
-
 
 def acceptNFA(string, start_state, accept_states, nfa):
     current_states = [start_state]
     exists = False
-    # print(current_states)
     for letters in string:
         temp_list = []
-        # print("nfa", nfa)
-        # print("current state", current_states)
+        list_of_relations = []
         for state in current_states:
-            # print("state,letters", (state, letters))
-            if not ((state, letters) in nfa):
-                # print("not in here")
-                exists = False
-            else:
-                # print("it's here")
+            if ((state, letters) in nfa):
                 exists = True
+                break
+            elif ((state, 'lambda') in nfa):
+                for transitions in nfa:
+                    list_of_relations.append(transitions)
+                for trans in list_of_relations:
+                    if (trans[1] == letters):
+                        exists = True
+                        break
+                    else:
+                        exists = False
+            else:
+                exists = False
         if not (exists):
             return False
         for state in current_states:
-            # print("state", state)
-            # print("letter", letters)
             if ((state, letters) in nfa):
                 temp_list += nfa[(state, letters)]
-                # print("temp", temp_list)
                 current_states = temp_list
-    #     print("curr states now", current_states)
-    # print("accept", accept_states)
-    # print("curr", current_states)
+            elif ((state, 'lambda') in nfa):
+                temp_list += nfa[(state, 'lambda')]
+                current_states = temp_list
+                temp_list = []
+                for state in current_states:
+                    if ((state, letters) in nfa):
+                        temp_list += nfa[(state, letters)]
+                        current_states = temp_list
     for a_states in accept_states:
         for c_states in current_states:
-            # print("c", c_states)
-            # print("a", a_states)
             if c_states in accept_states:
-                # print("True")
                 return True
     return False
-
-
-def checkLambda(transition, string, start_state, accept_states, nfa):
-    if not ('lambda' in transition):
-        return False
-    print("lambda start", start_state)
-    print("lambda accept", accept_states)
-    print("lambda nfa", nfa)
-    print("lambda transition", transition)
-    print("check it", nfa[transition])
-    temp_list = []
-    for state in nfa[transition]:
-        print("state", state)
-        # print("nfa", nfa[(state, 'lambda')])
-        # if (nfa[(state, 'lambda')]):
-        #     print(checkLambda(string, state, accept_states, nfa))
-        # print("check", nfa[(state, letters)])
-        temp_list += nfa[transition]
-        print("temp", temp_list)
-        current_states = temp_list
-    return current_states
 
 
 if acceptNFA(string, start_state, accept_states, nfa):
